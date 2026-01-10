@@ -1,0 +1,95 @@
+{% extends 'tours/base.html' %}
+
+{% block content %}
+
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm" 
+     style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://source.unsplash.com/1600x900/?travel,nature') no-repeat center center; background-size: cover; color: white;">
+    <div class="container-fluid py-5 text-center">
+        <h1 class="display-5 fw-bold">Find Your Next Adventure</h1>
+        <p class="fs-4">Explore the world with our curated tour packages.</p>
+        
+        <div class="card p-4 mt-4 text-dark mx-auto" style="max-width: 800px; background: rgba(255,255,255,0.9);">
+            <form action="{% url 'tour_list' %}" method="get" class="row g-3">
+                
+                <div class="col-md-5">
+                    <select name="destination" class="form-select" aria-label="Select Destination">
+                        <option value="" selected>Where do you want to go?</option>
+                        {% for dest in destinations %}
+                            <option value="{{ dest.id }}">{{ dest.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <select name="max_price" class="form-select">
+                        <option value="" selected>Max Budget</option>
+                        <option value="10000">Under ₹10,000</option>
+                        <option value="20000">Under ₹20,000</option>
+                        <option value="50000">Under ₹50,000</option>
+                        <option value="100000">Under ₹1,00,000</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Search Tours</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="mb-5">
+    <h2 class="border-bottom pb-2 mb-4">Top Rated Packages</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for tour in featured_tours %}
+        <div class="col">
+            <div class="card h-100 shadow-sm hover-shadow">
+                <img src="{{ tour.main_image.url }}" class="card-img-top" alt="{{ tour.title }}" style="height: 200px; object-fit: cover;">
+                
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-info text-dark">{{ tour.destination }}</span>
+                        <small class="text-muted">{{ tour.days }}D / {{ tour.nights }}N</small>
+                    </div>
+                    <h5 class="card-title">{{ tour.title }}</h5>
+                    <p class="card-text text-truncate">{{ tour.description }}</p>
+                </div>
+                
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="text-primary mb-0">₹{{ tour.price }}</h5>
+                    <a href="{% url 'tour_detail' tour.pk %}" class="btn btn-outline-primary btn-sm">View Itinerary</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">No featured tours available right now. Check back soon!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mb-5">
+    <h3 class="mb-3">Explore by Destination</h3>
+    <div class="row">
+        {% for dest in destinations %}
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'tour_list' %}?destination={{ dest.id }}" class="text-decoration-none">
+                <div class="card bg-dark text-white text-center border-0 zoom-effect">
+                    <div class="card-body py-4">
+                        <h5 class="card-title m-0">{{ dest.name }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Simple hover effect for destination cards */
+    .zoom-effect { transition: transform 0.2s; }
+    .zoom-effect:hover { transform: scale(1.05); background-color: #0d6efd !important; }
+</style>
+
+{% endblock %}
