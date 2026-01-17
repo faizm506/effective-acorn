@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DreamTravels | Explore the World</title>
+    
+    <link rel="icon" type="image/jpg" href="/media/tours/main/title_logo.jpg">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-body: #F8FAFC;
+            --text-main: #1E293B;
+            --primary-dark: #020617;
+            --accent-gold: #D4AF37;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- B. GLOBAL RESPONSIVENESS & TYPOGRAPHY --- */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden; display: flex; flex-direction: column;
+            min-height: 100vh;
+            opacity: 0; visibility: hidden;
+        }
+
+        /* Fluid Typography: Scales smoothly between 320px and 1200px screens */
+        h1, .display-1, .display-2, .display-3 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem) !important; 
+        }
+        h2, .display-4, .display-5 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: clamp(2rem, 4vw + 1rem, 3.5rem) !important; 
+        }
+        h3, .display-6 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: clamp(1.5rem, 3vw + 1rem, 2.5rem) !important; 
+        }
+        p.lead {
+            font-size: clamp(1rem, 2vw, 1.25rem) !important;
+        }
+
+        /* Global Image & Video Safety */
+        img, video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        main { flex-grow: 1; display: flex; flex-direction: column; width: 100%; }
+
+        /* --- C. RESPONSIVE NAVBAR --- */
+        .navbar-custom {
+            padding: 1.5rem 0;
+            position: fixed; 
+            width: 100%; 
+            top: 0; 
+            z-index: 1050;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--primary-dark); /* Default: Solid Black for visibility */
+        }
+
+        .navbar-custom .container { transition: all 0.4s ease; }
+
+        /* Scrolled State */
+        .navbar-custom.scrolled { 
+            padding: 1rem 0;
+            background-color: transparent; 
+        }
+
+        .navbar-custom.scrolled .container {
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50px; 
+            padding: 0.8rem 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            max-width: 95%;
+        }
+
+        /* Mobile Navbar Adjustments */
+        .navbar-brand { 
+            font-size: clamp(1.3rem, 2.5vw, 1.6rem); /* Fluid Logo Size */
+            font-weight: 700; color: #fff !important; letter-spacing: -0.5px; display: flex; align-items: center; 
+        }
+        
+        .nav-link { font-weight: 500; font-size: 0.9rem; margin: 0 8px; color: rgba(255,255,255,0.7) !important; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; position: relative; }
+        .nav-link:hover, .nav-link.active { color: #fff !important; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 1px; bottom: 0px; left: 50%; background-color: var(--accent-gold); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(-50%); }
+        .nav-link:hover::after { width: 100%; }
+
+        @media (max-width: 991px) {
+            .navbar-custom { padding: 1rem 0; } /* Smaller padding on mobile */
+            .navbar-collapse { background: var(--primary-dark); padding: 1.5rem; border-radius: 15px; margin-top: 10px; border: 1px solid var(--glass-border); }
+            .navbar-custom.scrolled .container { max-width: 100%; border-radius: 0; padding: 0.5rem 1rem; }
+            .nav-link { margin: 10px 0; }
+        }
+
+        /* --- D. RESPONSIVE FOOTER --- */
+        .footer-premium {
+            background-color: var(--primary-dark);
+            color: #94a3b8;
+            padding: 30px 0 20px 0; 
+            width: 100%; margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            position: relative; z-index: 10;
+        }
+        .footer-content-wrapper { display: flex; flex-direction: column; align-items: center; }
+        .footer-logo { font-size: 1.5rem; color: #fff; margin-bottom: 0.25rem; display: inline-block; text-decoration: none; }
+        .footer-desc { 
+            font-size: 0.85rem; font-weight: 300; 
+            max-width: 90%; /* Responsive width */
+            width: 400px; 
+            margin: 0 auto 1rem auto; line-height: 1.4; color: #cbd5e1; 
+        }
+        
+        .social-btn {
+            width: 35px; height: 35px; font-size: 0.9rem; border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15); display: inline-flex; align-items: center; justify-content: center;
+            color: white; text-decoration: none; margin: 0 4px; transition: all 0.3s ease; background: transparent;
+        }
+        .social-btn:hover { background: white; color: var(--primary-dark); border-color: white; transform: scale(1.1); }
+
+        .copyright-text {
+            border-top: 1px solid rgba(255,255,255,0.05); margin-top: 1.5rem; padding-top: 1rem;
+            font-size: 0.7rem; /* Smaller on mobile */
+            letter-spacing: 0.5px; text-transform: uppercase; color: rgba(255,255,255,0.3); width: 100%;
+        }
+
+        /* --- E. NOTIFICATIONS --- */
+        .toast { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: none; border-left: 4px solid var(--accent-gold); box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
+        .toast-header { background: transparent; color: var(--primary-dark); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .gs-reveal { visibility: visible; }
+    </style>
+</head>
+
+<body class="d-flex flex-column h-100">
+    
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-custom" id="mainNav">
+        <div class="container">
+            <div class="nav-item-anim">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <i class="bi bi-airplane-engines-fill text-warning me-2"></i>DreamTravels
+                </a>
+            </div>
+            
+            <button class="navbar-toggler border-0 nav-item-anim" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item nav-item-anim"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item nav-item-anim"><a class="nav-link" href="{% url 'tour_list' %}">Packages</a></li>
+                    <li class="nav-item nav-item-anim"><a class="nav-link" href="{% url 'destination_list' %}">Destinations</a></li>
+                    <li class="nav-item nav-item-anim"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
+                    <li class="nav-item nav-item-anim"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+
+                    {% if user.is_authenticated and user.is_superuser %}
+                        <li class="nav-item ms-lg-4 ps-lg-4 border-start border-white border-opacity-10 d-none d-lg-block nav-item-anim"></li>
+                        <li class="nav-item nav-item-anim">
+                             <div class="dropdown mt-3 mt-lg-0">
+                                <a class="btn btn-outline-warning rounded-pill px-4 fw-bold dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="border-width: 2px;">
+                                    Admin
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 p-2 rounded-3">
+                                    <li><a class="dropdown-item mb-1" href="{% url 'admin_dashboard' %}"><i class="bi bi-grid-fill me-2 text-primary"></i>Dashboard</a></li>
+                                    <li><a class="dropdown-item mb-1" href="/admin/"><i class="bi bi-database-fill me-2 text-secondary"></i>Database</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form action="/admin/logout/" method="post" class="m-0">
+                                            {% csrf_token %}
+                                            <button type="submit" class="dropdown-item text-danger fw-bold"><i class="bi bi-power me-2"></i>Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% if messages %}
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000; margin-top: 90px;">
+                {% for message in messages %}
+                <div class="toast show rounded-3" role="alert">
+                    <div class="toast-header">
+                        <strong class="me-auto {% if message.tags == 'error' %}text-danger{% else %}text-success{% endif %}">
+                            <i class="bi bi-bell-fill me-2"></i>System
+                        </strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body fw-medium">{{ message }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer-premium">
+        <div class="container footer-content-wrapper text-center">
+            
+            <div class="footer-anim">
+                <a href="#" class="footer-logo font-playfair">
+                    DreamTravels<span style="color: var(--accent-gold)">.</span>
+                </a>
+                <p class="footer-desc">
+                    Crafting unforgettable journeys for the modern explorer.
+                </p>
+            </div>
+            
+            <div class="social-links footer-anim">
+                <a href="#" class="social-btn" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="social-btn" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="social-btn" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" class="social-btn" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            </div>
+
+            <div class="copyright-text footer-anim">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-12">
+                        <small>&copy; {% now "Y" %} DREAMTRAVELS AGENCY INC. &nbsp;&bull;&nbsp; PRIVACY &nbsp;&bull;&nbsp; TERMS</small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <script>
+        // --- LENIS SMOOTH SCROLL ---
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smooth: true,
+            direction: 'vertical',
+        });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+
+        // --- GSAP ANIMATIONS ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Body Reveal
+        gsap.to("body", { autoAlpha: 1, duration: 0.8, delay: 0.2 });
+
+        // Navbar Stagger
+        gsap.from(".nav-item-anim", {
+            y: -30, opacity: 0, duration: 1, stagger: 0.1, ease: "power4.out", delay: 1
+        });
+
+        // Content Scroll Reveal (Targeting global classes)
+        const revealElements = document.querySelectorAll(".travel-card, .dest-card, h1, h2, h3, p.lead, .btn-hero, .fade-in-up");
+        revealElements.forEach((elem) => {
+            gsap.fromTo(elem, 
+                { y: 50, opacity: 0 },
+                {
+                    y: 0, opacity: 1, duration: 1.2, ease: "power3.out",
+                    scrollTrigger: { trigger: elem, start: "top 85%" }
+                }
+            );
+        });
+
+        // Simple Footer Fade In
+        gsap.from(".footer-anim", {
+            y: 20, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power2.out",
+            scrollTrigger: { trigger: ".footer-premium", start: "top 95%" } 
+        });
+
+        // --- NAVBAR LOGIC ---
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) nav.classList.add("scrolled");
+            else nav.classList.remove("scrolled");
+        });
+
+        // --- TITLE BLINKER ---
+        let originalTitle = document.title;
+        let blinkInterval = null;
+
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                let count = 0;
+                blinkInterval = setInterval(() => {
+                    document.title = (count % 2 === 0) ? "✈️ Your Journey Awaits" : "DreamTravels | Come Back";
+                    count++;
+                }, 2000); 
+            } else {
+                clearInterval(blinkInterval);
+                document.title = originalTitle; 
+            }
+        });
+    </script>
+</body>
+</html>

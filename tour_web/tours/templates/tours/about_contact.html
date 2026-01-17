@@ -1,0 +1,430 @@
+{% extends 'tours/base.html' %}
+
+{% block content %}
+
+<style>
+    /* --- 1. PREMIUM TYPOGRAPHY & VARS --- */
+    :root {
+        --primary-dark: #0f172a;
+        --accent-gold: #D4AF37;
+        --text-body: #475569;
+        --bg-soft: #f8fafc;
+    }
+
+    body {
+        color: var(--text-body);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    h1, h2, h3, h4, h5 {
+        font-family: 'Playfair Display', serif;
+        color: var(--primary-dark);
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    p {
+        line-height: 1.8;
+        font-size: 1.05rem;
+        font-weight: 400;
+    }
+
+    /* --- 2. LAYOUT & SPACING --- */
+
+    .page-wrapper {
+        padding-top: 120px;
+        background-color: white;
+    }
+
+  /* --- 3. CINEMATIC VIDEO HERO --- */
+    .about-hero {
+        position: relative;
+        height: 70vh;
+        min-height: 500px;
+        width: 100%;
+        overflow: hidden; /* Ensures video stays inside */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Removed background-image */
+    }
+
+    .hero-video {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover; /* Ensures video fills screen without stretching */
+        z-index: 0; /* Behind everything */
+        filter: brightness(0.8); /* Slight dim for text readability */
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        /* Gradient for better text contrast */
+        background: linear-gradient(180deg, rgba(2,6,23,0.3) 0%, rgba(2,6,23,0.6) 100%);
+        z-index: 1; /* Above video, below text */
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2; /* On top of everything */
+        text-align: center;
+        color: white;
+    }
+
+    /* --- 4. STORY SECTION --- */
+    .story-section { padding: 100px 0; }
+    
+    .story-img-container {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 20px 20px 0 rgba(212, 175, 55, 0.15); /* Gold offset shadow */
+    }
+
+    .story-img {
+        width: 100%; height: 550px; object-fit: cover;
+        transition: transform 1.5s ease;
+    }
+    .story-img-container:hover .story-img { transform: scale(1.05); }
+
+    .founder-box {
+        background: white;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        padding: 20px 30px;
+        margin-top: 40px;
+        display: inline-flex; align-items: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+    .founder-box:hover { transform: translateY(-5px); }
+
+    /* --- 5. STATS SECTION (Dark Mode) --- */
+    .stats-section {
+        background-color: var(--primary-dark);
+        padding: 80px 0;
+        color: white;
+        position: relative;
+    }
+    .stat-card {
+        padding: 20px;
+    }
+    .stat-number {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem; font-weight: 700; 
+        color: var(--accent-gold);
+        margin-bottom: 5px;
+        line-height: 1;
+    }
+    .stat-label {
+        font-size: 0.9rem; text-transform: uppercase; 
+        letter-spacing: 2px; opacity: 0.8; font-weight: 600;
+    }
+
+    /* --- 6. REVIEWS CARD --- */
+    .review-card {
+        background: white; border: 1px solid #f1f5f9;
+        border-radius: 20px; padding: 30px; height: 100%;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .review-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    /* --- 7. CONTACT FORM --- */
+    .contact-section { padding: 100px 0; background-color: white; }
+    
+    .contact-box {
+        background: white;
+        padding: 50px;
+        border-radius: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 20px 50px -10px rgba(0,0,0,0.08);
+    }
+
+    .info-icon {
+        width: 50px; height: 50px;
+        background-color: #f1f5f9; color: var(--primary-dark);
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; margin-right: 20px; transition: all 0.3s;
+    }
+    .contact-item:hover .info-icon { background-color: var(--accent-gold); color: white; }
+
+    /* Premium Inputs */
+    .form-control, .form-select {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 14px;
+        color: var(--primary-dark);
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: white;
+        border-color: var(--primary-dark);
+        box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05);
+    }
+    
+    .btn-submit {
+        background: var(--primary-dark); color: white;
+        padding: 16px; border-radius: 50px;
+        font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+        font-size: 0.9rem; border: none; transition: all 0.3s;
+    }
+    .btn-submit:hover {
+        background: var(--accent-gold);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(212, 175, 55, 0.25);
+    }
+</style>
+
+<div class="nav-background-spacer"></div>
+
+<div class="page-wrapper">
+
+   <div class="about-hero">
+        
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <div class="hero-overlay"></div>
+
+        <div class="container hero-content">
+            <span class="text-uppercase text-warning fw-bold letter-spacing-2 mb-3 d-block fade-in-up">
+                <i class="bi bi-compass me-2"></i>Our Philosophy
+            </span>
+            <h1 class="display-2 mb-4 text-white fade-in-up" style="font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                The Art of Exploration
+            </h1>
+            <p class="lead text-white-50 mx-auto fade-in-up" style="max-width: 600px; font-weight: 300;">
+                We don't just plan vacations. We curate visual journeys that leave a permanent mark on your soul.
+            </p>
+        </div>
+    </div>
+
+    <section class="story-section">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 fade-in-up">
+                    <div class="story-img-container">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" class="story-img" alt="Our Team">
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 fade-in-up">
+                    <h6 class="text-uppercase text-warning fw-bold mb-3 letter-spacing-1">Who We Are</h6>
+                    <h2 class="mb-4 display-5">Travelers First,<br>Planners Second.</h2>
+                    <p class="mb-4">
+                        DreamTravels started with a simple backpack and a one-way ticket. We realized the best travel experiences aren't found in brochures—they are found in local interactions, hidden cafes, and spontaneous detours.
+                    </p>
+                    <p>
+                        Today, we help thousands of travelers find their own path. We combine expert logistics with real-world experience to ensure your trip is seamless, safe, and unforgettable.
+                    </p>
+
+                    <div class="founder-box">
+                        <img src="/media/tours/gallery/download (2).jpg" class="rounded-circle me-3 object-fit-cover" width="60" height="60">
+                        <div>
+                            <h5 class="mb-0 fw-bold text-dark font-playfair">Faiz Mansuri</h5>
+                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Founder & CEO</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4 mb-md-0 fade-in-up">
+                    <div class="stat-card">
+                        <div class="stat-number">50k+</div>
+                        <div class="stat-label">Happy Travelers</div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0 fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="stat-card">
+                        <div class="stat-number">120+</div>
+                        <div class="stat-label">Destinations</div>
+                    </div>
+                </div>
+                <div class="col-md-4 fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="stat-card">
+                        <div class="stat-number">4.9</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="review-section" style="background-color: #fff; padding: 100px 0;">
+        <div class="container">
+            <div class="text-center mb-5 fade-in-up">
+                <h6 class="text-uppercase text-warning fw-bold mb-2 letter-spacing-1">Testimonials</h6>
+                <h2 class="mb-4 display-5 fw-bold text-dark">Stories from our Travelers</h2>
+            </div>
+
+            <div class="row g-4">
+                {% for review in reviews %}
+                <div class="col-md-6 col-lg-3 fade-in-up">
+                    <div class="review-card d-flex flex-column">
+                        <div class="mb-3 text-warning small">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                    <i class="bi bi-star text-light"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <p class="text-muted small mb-4 flex-grow-1 fst-italic">
+                            "{{ review.comment|truncatechars:120 }}"
+                        </p>
+
+                        <div class="d-flex align-items-center mt-auto pt-3 border-top border-light">
+                            {% if review.photo %}
+                                <img src="{{ review.photo.url }}" class="rounded-circle me-3 object-fit-cover shadow-sm" width="45" height="45">
+                            {% else %}
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3 fw-bold text-secondary" style="width: 45px; height: 45px;">
+                                    {{ review.customer_name|slice:":1" }}
+                                </div>
+                            {% endif %}
+                            
+                            <div style="line-height: 1.2;">
+                                <h6 class="fw-bold text-dark mb-0 small">{{ review.customer_name }}</h6>
+                                <small class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;">{{ review.customer_title|default:"Traveler" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5 fade-in-up">
+                    <p class="text-muted">No reviews available yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" style="background-color: #f8fafc;">
+        <div class="container">
+            <div class="row g-5">
+                
+                <div class="col-lg-5 fade-in-up">
+                    <h2 class="mb-4 display-6">Get in Touch</h2>
+                    <p class="mb-5 text-muted">Ready to plan your next adventure? Our team of experts is standing by to help you craft the perfect itinerary.</p>
+
+                    <div class="contact-item d-flex align-items-center mb-4">
+                        <div class="info-icon shadow-sm"><i class="bi bi-geo-alt-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">Headquarters</h6>
+                            <span class="text-muted small">123 Adventure Plaza, Mumbai, India</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-item d-flex align-items-center mb-4">
+                        <div class="info-icon shadow-sm"><i class="bi bi-envelope-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">Email Us</h6>
+                            <span class="text-muted small">support@dreamtravels.com</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-item d-flex align-items-center mb-4">
+                        <div class="info-icon shadow-sm"><i class="bi bi-telephone-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">Call Us</h6>
+                            <span class="text-muted small">+91 98765 43210</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7 fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="contact-box">
+                        <h4 class="mb-4 fw-bold font-playfair">Send a Message</h4>
+                        
+                        <form method="post" action="{% url 'about' %}">
+                            {% csrf_token %}
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-muted text-uppercase">Your Name</label>
+                                    <input type="text" name="customer_name" class="form-control" placeholder="John Doe" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-muted text-uppercase">Email Address</label>
+                                    <input type="email" name="email" class="form-control" placeholder="john@example.com" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-muted text-uppercase">Phone Number</label>
+                                    <input type="tel" name="phone" class="form-control" placeholder="+91..." required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-muted text-uppercase">Subject</label>
+                                    <select name="subject" class="form-select cursor-pointer">
+                                        <option value="General Inquiry">General Inquiry</option>
+                                        <option value="Plan a Trip">Plan a Trip</option>
+                                        <option value="Support">Support</option>
+                                        <option value="Partnership">Partnership</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-muted text-uppercase">Message</label>
+                                    <textarea name="message" class="form-control" rows="4" placeholder="How can we help you?" required></textarea>
+                                </div>
+
+                                <div class="col-12 pt-2">
+                                    <button type="submit" class="btn-submit w-100">
+                                        Send Message
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof gsap !== 'undefined') {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Cascading Reveal Animation
+            const elements = document.querySelectorAll('.fade-in-up');
+            gsap.fromTo(elements, 
+                { y: 50, opacity: 0 },
+                {
+                    y: 0, opacity: 1, duration: 1, 
+                    stagger: 0.1, // Delays each item slightly for a "flow" effect
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: ".page-wrapper",
+                        start: "top 80%" // Starts animation when top of section hits 80% of viewport
+                    }
+                }
+            );
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends 'tours/base.html' %}
+
+{% block content %}
+
+<style>
+    /* --- 1. DARK THEME SETUP --- */
+    body {
+        background-color: #eff2fb; /* Deep Navy/Black */
+        color: white;
+    }
+    
+
+
+    .page-wrapper {
+        padding-top: 140px;
+        padding-bottom: 80px;
+        min-height: 100vh;
+    }
+
+    /* --- 2. HEADER TYPOGRAPHY --- */
+    .gallery-header {
+        text-align: center;
+        margin-bottom: 80px;
+        position: relative;
+    }
+    
+    .gallery-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 4rem;
+        font-weight: 700;
+        background: linear-gradient(to right, #887272 20%, #29313d 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .gallery-subtitle {
+        color: #D4AF37; /* Gold */
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    /* --- 3. PREMIUM MASONRY GRID --- */
+    .masonry-grid {
+        column-count: 3;
+        column-gap: 30px;
+    }
+
+    @media (max-width: 991px) { .masonry-grid { column-count: 2; column-gap: 20px; } }
+    @media (max-width: 576px) { .masonry-grid { column-count: 1; } }
+
+    .gallery-item {
+        break-inside: avoid;
+        margin-bottom: 30px;
+        position: relative;
+        border-radius: 0; /* Sharp corners for editorial look */
+        overflow: hidden;
+        cursor: pointer;
+        background: #0f172a;
+    }
+
+    /* Image Animation */
+    .g-img {
+        width: 100%;
+        display: block;
+        transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
+        opacity: 0.85;
+        filter: grayscale(30%); /* Subtle artistic touch */
+    }
+
+    .gallery-item:hover .g-img {
+        transform: scale(1.1);
+        opacity: 1;
+        filter: grayscale(0%);
+    }
+
+    /* --- 4. HOVER OVERLAY INFO --- */
+    .g-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 30px;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .gallery-item:hover .g-overlay { opacity: 1; }
+
+    .g-caption {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: 5px;
+        transform: translateY(20px);
+        transition: transform 0.5s ease;
+    }
+
+    .g-date {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.75rem;
+        color: #D4AF37;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transform: translateY(20px);
+        transition: transform 0.5s ease 0.1s;
+    }
+
+    .gallery-item:hover .g-caption,
+    .gallery-item:hover .g-date {
+        transform: translateY(0);
+    }
+    
+    /* Decoration Line */
+    .g-line {
+        width: 0; height: 1px; background: white;
+        margin-bottom: 15px; transition: width 0.6s ease;
+    }
+    .gallery-item:hover .g-line { width: 40px; }
+
+</style>
+
+<div class="nav-background-spacer"></div>
+
+<div class="container page-wrapper">
+    
+    <div class="gallery-header gs-reveal">
+        <span class="gallery-subtitle">Portfolio</span>
+        <h1 class="gallery-title">Visual Stories</h1>
+        <p class="text-white-50 mx-auto" style="max-width: 500px; font-weight: 300;">
+            A curated collection of moments captured from our journeys around the world.
+        </p>
+    </div>
+
+    <div class="masonry-grid">
+        {% for img in images %}
+        <div class="gallery-item card-anim">
+            
+            {% if img.image %}
+                <img src="{{ img.image.url }}" alt="{{ img.caption }}" class="g-img">
+            {% endif %}
+            
+            <div class="g-overlay">
+                <div class="g-line"></div>
+                <h3 class="g-caption">
+                    {% if img.caption %}
+                        {{ img.caption }}
+                    {% else %}
+                        Untitled Moment
+                    {% endif %}
+                </h3>
+                <span class="g-date">{{ img.uploaded_at|date:"F Y" }}</span>
+            </div>
+            
+        </div>
+        {% empty %}
+        <div class="text-center py-5 w-100 text-white-50">
+            <p>The gallery is currently being curated. Check back soon.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof gsap !== 'undefined') {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Stagger reveal for gallery items
+            const items = document.querySelectorAll('.card-anim');
+            gsap.fromTo(items, 
+                { y: 100, opacity: 0 },
+                {
+                    y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power4.out",
+                    scrollTrigger: {
+                        trigger: ".masonry-grid",
+                        start: "top 90%"
+                    }
+                }
+            );
+        }
+    });
+</script>
+
+{% endblock %}
