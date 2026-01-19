@@ -256,3 +256,81 @@ def download_monthly_report(request):
     return response
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+from .forms import (
+    DestinationForm, TourPackageForm, TourDateForm, 
+    TourImageForm, ItineraryForm, GalleryImageForm, ReviewForm
+)
+
+@user_passes_test(lambda u: u.is_superuser, login_url='/admin/login/')
+def data_management_dashboard(request):
+    # Initialize all forms
+    forms = {
+        'dest_form': DestinationForm(),
+        'tour_form': TourPackageForm(),
+        'date_form': TourDateForm(),
+        'img_form': TourImageForm(),
+        'itinerary_form': ItineraryForm(),
+        'gallery_form': GalleryImageForm(),
+        'review_form': ReviewForm(),
+    }
+
+    if request.method == 'POST':
+        # Determine which form was submitted using a hidden input 'form_type'
+        form_type = request.POST.get('form_type')
+        
+        if form_type == 'destination':
+            form = DestinationForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Destination Added Successfully! 🌍")
+                return redirect('data_dashboard')
+        
+        elif form_type == 'tour':
+            form = TourPackageForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Tour Package Created! ✈️")
+                return redirect('data_dashboard')
+
+        elif form_type == 'date':
+            form = TourDateForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Tour Date Added! 📅")
+                return redirect('data_dashboard')
+
+        elif form_type == 'image':
+            form = TourImageForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Tour Image Uploaded! 📸")
+                return redirect('data_dashboard')
+
+        elif form_type == 'itinerary':
+            form = ItineraryForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Itinerary Day Added! 📝")
+                return redirect('data_dashboard')
+
+        elif form_type == 'gallery':
+            form = GalleryImageForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Public Gallery Image Added! 🎨")
+                return redirect('data_dashboard')
+
+        elif form_type == 'review':
+            form = ReviewForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Review Added! ⭐")
+                return redirect('data_dashboard')
+        
+        # If we fall through, something failed validation
+        messages.error(request, "Error adding data. Please check the form.")
+
+    return render(request, 'tours/data_dashboard.html', forms)

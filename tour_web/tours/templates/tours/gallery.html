@@ -9,8 +9,6 @@
         color: white;
     }
     
-
-
     .page-wrapper {
         padding-top: 140px;
         padding-bottom: 80px;
@@ -20,7 +18,7 @@
     /* --- 2. HEADER TYPOGRAPHY --- */
     .gallery-header {
         text-align: center;
-        margin-bottom: 80px;
+        margin-bottom: 60px;
         position: relative;
     }
     
@@ -43,20 +41,24 @@
         font-weight: 600;
     }
 
-    /* --- 3. PREMIUM MASONRY GRID --- */
+    /* --- 3. TRUE MASONRY GRID (Pinterest Style) --- */
     .masonry-grid {
+        /* This creates the columns */
         column-count: 3;
-        column-gap: 30px;
+        column-gap: 20px;
     }
 
-    @media (max-width: 991px) { .masonry-grid { column-count: 2; column-gap: 20px; } }
-    @media (max-width: 576px) { .masonry-grid { column-count: 1; } }
-
     .gallery-item {
-        break-inside: avoid;
-        margin-bottom: 30px;
+        /* Essential for Masonry: Prevents an image from being cut between columns */
+        break-inside: avoid-column;
+        -webkit-column-break-inside: avoid;
+        page-break-inside: avoid;
+        
+        display: inline-block; /* Helps maintain block integrity in columns */
+        width: 100%;
+        margin-bottom: 20px; /* Vertical gap between items */
         position: relative;
-        border-radius: 0; /* Sharp corners for editorial look */
+        border-radius: 12px;
         overflow: hidden;
         cursor: pointer;
         background: #0f172a;
@@ -65,14 +67,15 @@
     /* Image Animation */
     .g-img {
         width: 100%;
+        height: auto; /* CRITICAL: Allows image to be its natural height */
         display: block;
         transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
-        opacity: 0.85;
-        filter: grayscale(30%); /* Subtle artistic touch */
+        opacity: 0.9;
+        filter: grayscale(20%);
     }
 
     .gallery-item:hover .g-img {
-        transform: scale(1.1);
+        transform: scale(1.05);
         opacity: 1;
         filter: grayscale(0%);
     }
@@ -81,34 +84,34 @@
     .g-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%);
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
-        padding: 30px;
+        padding: 25px;
         opacity: 0;
-        transition: opacity 0.5s ease;
+        transition: opacity 0.4s ease;
     }
 
     .gallery-item:hover .g-overlay { opacity: 1; }
 
     .g-caption {
         font-family: 'Playfair Display', serif;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         color: white;
         margin-bottom: 5px;
         transform: translateY(20px);
-        transition: transform 0.5s ease;
+        transition: transform 0.4s ease;
     }
 
     .g-date {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: #D4AF37;
         text-transform: uppercase;
         letter-spacing: 1px;
         transform: translateY(20px);
-        transition: transform 0.5s ease 0.1s;
+        transition: transform 0.4s ease 0.1s;
     }
 
     .gallery-item:hover .g-caption,
@@ -119,9 +122,26 @@
     /* Decoration Line */
     .g-line {
         width: 0; height: 1px; background: white;
-        margin-bottom: 15px; transition: width 0.6s ease;
+        margin-bottom: 10px; transition: width 0.6s ease;
     }
-    .gallery-item:hover .g-line { width: 40px; }
+    .gallery-item:hover .g-line { width: 30px; }
+
+    /* --- RESPONSIVE BREAKPOINTS --- */
+    @media (max-width: 991px) { 
+        .masonry-grid { column-count: 2; } 
+        .gallery-title { font-size: 3rem; }
+    }
+    
+    @media (max-width: 576px) { 
+        .masonry-grid { column-count: 1; } 
+        .gallery-title { font-size: 2.5rem; }
+        .page-wrapper { padding-top: 120px; }
+        
+        /* On mobile, show overlay text subtly without hover */
+        .g-overlay { opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%); }
+        .g-caption, .g-date { transform: translateY(0); }
+        .g-line { width: 30px; }
+    }
 
 </style>
 
@@ -138,28 +158,41 @@
     </div>
 
     <div class="masonry-grid">
-        {% for img in images %}
+        {% for item in images %}
         <div class="gallery-item card-anim">
             
-            {% if img.image %}
-                <img src="{{ img.image.url }}" alt="{{ img.caption }}" class="g-img">
+            {# --- CHECK IF VIDEO EXISTS FIRST --- #}
+            {% if item.video %}
+                <video class="g-img" autoplay loop muted playsinline poster="{% if item.image %}{{ item.image.url }}{% endif %}">
+                    <source src="{{ item.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                
+                {# Add a small icon to indicate it's a video #}
+                <div class="position-absolute top-0 end-0 p-3" style="z-index: 2; pointer-events: none;">
+                    <i class="bi bi-play-circle-fill text-white opacity-75 fs-5"></i>
+                </div>
+
+            {# --- FALLBACK TO IMAGE --- #}
+            {% elif item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.caption }}" class="g-img">
             {% endif %}
             
             <div class="g-overlay">
                 <div class="g-line"></div>
                 <h3 class="g-caption">
-                    {% if img.caption %}
-                        {{ img.caption }}
+                    {% if item.caption %}
+                        {{ item.caption }}
                     {% else %}
-                        Untitled Moment
+                        Travel Moment
                     {% endif %}
                 </h3>
-                <span class="g-date">{{ img.uploaded_at|date:"F Y" }}</span>
+                <span class="g-date">{{ item.uploaded_at|date:"F Y" }}</span>
             </div>
             
         </div>
         {% empty %}
-        <div class="text-center py-5 w-100 text-white-50">
+        <div class="text-center py-5 w-100 text-white-50" style="break-inside: avoid;">
             <p>The gallery is currently being curated. Check back soon.</p>
         </div>
         {% endfor %}
@@ -172,12 +205,15 @@
         if (typeof gsap !== 'undefined') {
             gsap.registerPlugin(ScrollTrigger);
             
+            // MOBILE FIX: Prevents GSAP from refreshing on mobile address bar resize (Stops jumping)
+            ScrollTrigger.config({ ignoreMobileResize: true });
+            
             // Stagger reveal for gallery items
             const items = document.querySelectorAll('.card-anim');
             gsap.fromTo(items, 
                 { y: 100, opacity: 0 },
                 {
-                    y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power4.out",
+                    y: 0, opacity: 1, duration: 1.2, stagger: 0.1, ease: "power4.out",
                     scrollTrigger: {
                         trigger: ".masonry-grid",
                         start: "top 90%"

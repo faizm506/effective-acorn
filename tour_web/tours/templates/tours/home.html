@@ -125,6 +125,61 @@
     .tour-card:hover .card-title-link { color: #D4AF37; }
     .price-text { font-size: 1.25rem; font-weight: 800; color: #0f172a; }
 
+    /* --- HOMEPAGE TESTIMONIAL STYLES --- */
+    .testimonial-section {
+        background-color: #ffffff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Subtle background decoration */
+    .testimonial-section::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+        background-size: 30px 30px; opacity: 0.3; pointer-events: none;
+    }
+
+    .testimonial-card {
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.03);
+        border-radius: 24px;
+        padding: 40px 30px;
+        height: 100%;
+        position: relative;
+        box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
+        border-color: rgba(212, 175, 55, 0.3); /* Gold Tint */
+    }
+
+    /* Large background quote */
+    .watermark-quote {
+        position: absolute;
+        top: -10px;
+        right: 20px;
+        font-family: 'Playfair Display', serif;
+        font-size: 8rem;
+        line-height: 1;
+        color: #f8fafc; /* Very subtle grey */
+        z-index: 0;
+        pointer-events: none;
+        transition: transform 0.4s ease;
+    }
+    .testimonial-card:hover .watermark-quote {
+        transform: scale(1.1) rotate(-5deg);
+        color: #f1f5f9;
+    }
+
+    .user-avatar-shadow {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+
+
     /* --- 5. GALLERY STYLES --- */
     .gallery-item {
         position: relative;
@@ -194,6 +249,7 @@
         display: flex; flex-direction: column; justify-content: flex-end;
         padding: 25px; z-index: 2;
     }
+
 
     /* --- RESPONSIVE ADJUSTMENTS --- */
     @media (max-width: 991px) {
@@ -358,54 +414,72 @@
     </div>
 </div>
 
-<div class="container-fluid bg-white">
+<div class="container-fluid testimonial-section">
     <div class="container section-spacing">
-        <div class="text-center mb-5">
-            <span class="section-subtitle">Testimonials</span>
+        
+        <div class="text-center mb-5 fade-in-up">
+            <span class="section-subtitle">Community</span>
             <h2 class="section-title">Trusted by Travelers</h2>
+            <p class="text-muted mx-auto mt-2" style="max-width: 600px;">
+                Real stories from real adventurers who explored the world with us.
+            </p>
         </div>
 
         <div class="row g-4 justify-content-center">
-            {% for review in reviews %}
-            <div class="col-md-4 card-anim">
-                <div class="p-4 h-100 bg-white border rounded-4 shadow-sm position-relative" style="transition: transform 0.3s ease;">
-                    <div class="position-absolute top-0 start-0 translate-middle ms-4 mt-4 text-warning opacity-25 display-1" style="font-family: serif; line-height: 0;">&ldquo;</div>
+            {% for review in reviews|slice:":3" %} <div class="col-md-6 col-lg-4 card-anim">
+                <div class="testimonial-card">
                     
-                    <div class="mb-3 text-warning small position-relative z-1">
-                        {% for i in "12345"|make_list %}
-                            {% if forloop.counter <= review.rating %}
-                                <i class="bi bi-star-fill"></i>
+                    <div class="watermark-quote">&rdquo;</div>
+
+                    <div class="position-relative z-1 d-flex flex-column h-100">
+                        
+                        <div class="mb-3">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                {% else %}
+                                    <i class="bi bi-star-fill text-light"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <p class="text-secondary mb-4 flex-grow-1" style="font-size: 1.05rem; line-height: 1.7; font-style: italic;">
+                            "{{ review.comment|truncatechars:130 }}"
+                        </p>
+
+                        <div class="d-flex align-items-center pt-3 mt-auto border-top border-light">
+                            {% if review.photo %}
+                                <img src="{{ review.photo.url }}" class="rounded-circle object-fit-cover user-avatar-shadow me-3" width="50" height="50" alt="{{ review.customer_name }}">
                             {% else %}
-                                <i class="bi bi-star text-muted opacity-25"></i>
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3 text-secondary fw-bold border" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    {{ review.customer_name|slice:":1" }}
+                                </div>
                             {% endif %}
-                        {% endfor %}
-                    </div>
-
-                    <p class="text-muted mb-4 position-relative z-1" style="font-size: 0.95rem; line-height: 1.6;">
-                        {{ review.comment|truncatechars:150 }}
-                    </p>
-
-                    <div class="d-flex align-items-center mt-auto">
-                        {% if review.photo %}
-                            <img src="{{ review.photo.url }}" class="rounded-circle me-3 object-fit-cover shadow-sm" width="45" height="45">
-                        {% else %}
-                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3 fw-bold text-secondary border" style="width: 45px; height: 45px;">
-                                {{ review.customer_name|slice:":1" }}
+                            
+                            <div>
+                                <h6 class="fw-bold text-dark mb-0 font-playfair">{{ review.customer_name }}</h6>
+                                <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                    {{ review.customer_title|default:"Verified Traveler" }}
+                                </small>
                             </div>
-                        {% endif %}
-                        <div>
-                            <h6 class="fw-bold text-dark mb-0 small">{{ review.customer_name }}</h6>
-                            <small class="text-muted" style="font-size: 0.75rem;">{{ review.customer_title|default:"Traveler" }}</small>
                         </div>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-12 text-center text-muted">
-                <p>Our travelers are busy making memories. Reviews coming soon!</p>
+            <div class="col-12 text-center py-5">
+                <div class="p-5 bg-white rounded-4 shadow-sm border border-light">
+                    <i class="bi bi-chat-heart text-muted display-4 mb-3 d-block"></i>
+                    <p class="text-muted mb-0">Our travelers are busy making memories. Reviews coming soon!</p>
+                </div>
             </div>
             {% endfor %}
         </div>
+
+        <div class="text-center mt-5 d-md-none">
+            <a href="{% url 'about' %}" class="btn btn-outline-dark rounded-pill px-4 fw-bold">Read More Reviews</a>
+        </div>
+
     </div>
 </div>
 

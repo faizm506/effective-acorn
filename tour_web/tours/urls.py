@@ -14,4 +14,5 @@ urlpatterns = [
 
     path('gallery/', views.gallery, name='gallery'),
 
+    path('management/', views.data_management_dashboard, name='data_dashboard'),
 ]
