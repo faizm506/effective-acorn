@@ -83,7 +83,7 @@
     }
     input[type="file"]:hover { border-color: var(--accent-gold); background: #fffdf5; }
 
-    /* --- 5. IOS STYLE TOGGLE SWITCH (Fixed) --- */
+    /* --- 5. IOS STYLE TOGGLE SWITCH --- */
     .switch-container {
         display: flex; align-items: center;
         background: #f8fafc; padding: 15px; border-radius: 12px;
@@ -117,7 +117,7 @@
     }
 
     /* Checked State */
-    input:checked + .slider { background-color: var(--primary-navy); } /* Blue/Navy when on */
+    input:checked + .slider { background-color: var(--primary-navy); } 
     input:checked + .slider:before { transform: translateX(22px); }
 
     /* --- 6. BUTTONS --- */
@@ -194,7 +194,7 @@
                     <div class="form-card">
                         <div class="form-header">
                             <h2 class="form-title">Add Destination</h2>
-                            <p class="text-muted mb-0">Create a new location category (e.g., Dubai, Europe).</p>
+                            <p class="text-muted mb-0">Create a new location category.</p>
                         </div>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -280,7 +280,7 @@
                     <div class="form-card">
                         <div class="form-header">
                             <h2 class="form-title">Add Itinerary Day</h2>
-                            <p class="text-muted mb-0">Add details for a specific day (e.g., Day 1: Arrival).</p>
+                            <p class="text-muted mb-0">Add details for a specific day.</p>
                         </div>
                         <form method="post">
                             {% csrf_token %}
@@ -337,6 +337,7 @@
                 </div>
 
                 <div class="tab-pane fade" id="tab-gallery">
+                    
                     <div class="form-card mb-5">
                         <div class="form-header">
                             <h2 class="form-title"><i class="bi bi-images me-2"></i>Tour Carousel Images</h2>
@@ -388,6 +389,7 @@
                             </div>
                         </form>
                     </div>
+                </div>
 
                 <div class="tab-pane fade" id="tab-reviews">
                     <div class="form-card">
@@ -395,20 +397,22 @@
                             <h2 class="form-title">Manual Review Entry</h2>
                             <p class="text-muted mb-0">Add a client testimonial manually.</p>
                         </div>
+                        
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <input type="hidden" name="form_type" value="review">
+                            
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label>Customer Name</label>
                                     {{ review_form.customer_name }}
                                 </div>
                                 <div class="col-md-6">
-                                    <label>Title / Country</label>
+                                    <label>Title (e.g. Traveler from USA)</label>
                                     {{ review_form.customer_title }}
                                 </div>
                                 <div class="col-md-6">
-                                    <label>Rating (1-5)</label>
+                                    <label>Rating</label>
                                     {{ review_form.rating }}
                                 </div>
                                 <div class="col-md-6">
@@ -428,21 +432,20 @@
                                         </label>
                                         <div>
                                             <span class="fw-bold text-dark d-block">Visible immediately?</span>
-                                            <small class="text-muted">If off, review remains hidden until approved.</small>
+                                            <small class="text-muted">If off, review remains hidden.</small>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-12 mt-4">
+                                <div class="col-12 mt-4 text-end">
                                     <button type="submit" class="btn-save">Save Review</button>
                                 </div>
                             </div>
                         </form>
                     </div>
-                </div>
+                </div> 
 
-            </div>
-        </div>
+            </div> </div>
     </div>
 </div>
 
